@@ -134,7 +134,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					rocks.get(i).wallCollision(w1);
 				}
 				
-				g2d.setTransform(new AffineTransform());;
+				//g2d.setTransform(new AffineTransform());;
 				
 				
 				//draw bullets and set time for next bullet
@@ -201,7 +201,14 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				for(int i = 0 ; i<addAfter.size();i++) {
 					rocks.add(addAfter.get(i));
 				}
-					
+				
+				//display score
+				g2d.setColor(Color.red);
+				g2d.drawString("Score: ", 10, 45);
+				g2d.setColor(Color.green);
+				g2d.drawString(String.valueOf(score), 48, 45);
+				
+				
 			//gamestart bracket
 			}
 		}
@@ -233,12 +240,13 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	
 			//bullet firerate
 			if(bullethold) {
-				if(bulletspawntimer<1) { 
+				if(bulletspawntimer<1) {
+					//shotgun powerup, currently toggable
 					if(bulletspray) {
 						int numberOfBullets = (int) Math.round(8);
 						for(int i=0; i<numberOfBullets; i++) {
 							bullet pellet = new bullet(t1).setRadius(3);
-							int decider = (int) Math.round(Math.random()*4+1);
+							int decider = (int) Math.round(Math.random()*3+1);
 							if(decider == 1) {
 								pellet.xVel = pellet.xVel + ((Math.random()*0.75));
 								pellet.yVel = pellet.yVel + ((Math.random()*0.75));
@@ -305,6 +313,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				
 			}
 			
+			//shotgun toggle
 			if(e.getKeyCode() == KeyEvent.VK_S) {
 				bulletspray = !bulletspray;
 			}
