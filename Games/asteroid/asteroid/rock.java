@@ -3,8 +3,6 @@ package asteroid;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import asteroid.Wall;
-import asteroid.spacebase;
 
 class rock {
 	double xVel, yVel, x ,y, radius;
