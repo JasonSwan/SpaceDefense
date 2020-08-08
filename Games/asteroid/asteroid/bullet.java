@@ -49,6 +49,12 @@ class bullet {
 		
 	}
 	
+	public bullet setSpeed (double xVelModifier, double yVelModifier) {
+		this.xVel = this.xVel*xVelModifier;
+		this.yVel = this.yVel*yVelModifier;
+		return this;
+	}
+	
 	
 	public void move() {
 		if(x<0 || x>1280) {
