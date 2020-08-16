@@ -6,6 +6,7 @@ import java.awt.Graphics;
 
 class rock {
 	double xVel, yVel, x ,y, radius;
+	double xrecent,yrecent;
 	double xcalc, ycalc;
 	double xprev,yprev;
 	int collisionTimer;
@@ -14,6 +15,7 @@ class rock {
 	public rock(){
 		//570 is left most side of base
 		
+		/*
 		//make rocks spawn on random edge of map
 		int spawner = (int) Math.round(Math.random()*4+1);
 		if(spawner==1){
@@ -32,19 +34,24 @@ class rock {
 			x=1270;
 			y = Math.random() * 710 + 10;
 		}
+		*/
 		
 
-		xVel = getRandomSpeed()*getRandomDirection();
-		yVel = getRandomSpeed()*getRandomDirection();
+		//xVel = getRandomSpeed()*getRandomDirection();
+		//yVel = getRandomSpeed()*getRandomDirection();
 		
-		//x = 350;
-		//y = 0;
-		//xVel = 1.0;
-		//yVel = 1.0;
+		x = 568;
+		y = 0;
+		xVel = 0.0;
+		yVel = 1.0;
 		radius = 30;
 		
 		xcalc=x;
 		ycalc=y;
+		
+		
+		xrecent = x;
+		yrecent = y;
 		
 	}
 	
@@ -76,8 +83,7 @@ class rock {
 	
 	public void draw(Graphics g) {
 		g.setColor(Color.orange);
-		g.drawOval((int)(x-(radius)), (int)(y-(radius)), (int)(radius*2), (int)(2*radius));
-		
+		g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
 	}
 	
 	//test to record hidden rock point
@@ -96,17 +102,28 @@ class rock {
 		
 	}
 	
+	
+	//FIX COLLISION TIMER BY SETTING ROCKS TO INTANGIBLE UNTIL BULLET COLLISION IS FALSE
+	//attempting by collision moving rock back to xprev/yprev coordinates
+	
+	//if closest x is greater than ltx but less than half of radius, bounce at half radian angle
+	//need to add extra if else to both x and y
 	public boolean wallCollision (Wall w) {
 		if (collisionTimer!=0) {
 			return false;
 		}
+		
+		//boolean cornerBounce = false;
+		
+		//testing stretched margins
+		//remove -1/+1 if wrong
 		int[] ans = new int[2];
 		ans[0] = 0;
-		if (xcalc < w.ltx) {
+		if (xcalc < w.ltx-(radius/2)) {
 			int closestx = (int) w.ltx;
 			ans[0] = closestx;
 		}
-		else if (xcalc > w.rtx) {
+		else if (xcalc > w.rtx+(radius/2)) {
 			int closestx = (int) w.rtx;
 			ans[0] = closestx;
 		}
@@ -114,6 +131,7 @@ class rock {
 			int closestx = (int) xcalc;
 			ans[0] = closestx;
 		}
+		//test if
 		
 		if (ycalc < w.lty) {
 			int closesty = (int) w.lty;
@@ -139,8 +157,14 @@ class rock {
 		
 		if(total < (radius)) {
 			
-			double newxVel = Math.cos(Math.toRadians(w.r))*(xcalc-xprev) + Math.sin(Math.toRadians(w.r))*(ycalc-yprev);
-			double newyVel = -Math.sin(Math.toRadians(w.r))*(xcalc-xprev) + Math.cos(Math.toRadians(w.r))*(ycalc-yprev);
+			double newxVel;
+			double newyVel;
+			
+			
+			
+			newxVel = Math.cos(Math.toRadians(w.r))*(xcalc-xprev) + Math.sin(Math.toRadians(w.r))*(ycalc-yprev);
+			newyVel = -Math.sin(Math.toRadians(w.r))*(xcalc-xprev) + Math.cos(Math.toRadians(w.r))*(ycalc-yprev);
+	
 			/*
 			double newxVel = (xcalc-xprev);
 			double newyVel = (ycalc-yprev);
@@ -156,19 +180,47 @@ class rock {
 			//System.out.println("newy is; " + String.valueOf(newyVel));
 			
 			
+			
+			boolean cornerBounce = false;
 			if(ans[0] == w.ltx) {
+				x = xrecent;
+				y = yrecent;
 				yVel=newyVel;
 				xVel=w.movingWall*newxVel*-1;
+				//brute fix for "no bounce" scenarios
+				if(xVel==0) {
+					xVel=-0.5;
+					cornerBounce=true;
+				}
+				if (Math.abs(xVel)<0.50) {
+					xVel=xVel+(xVel*0.50);
+					cornerBounce=true;
+				}
 			}
 			else if (ans[0] == w.rtx) {
+				x = xrecent;
+				y = yrecent;
 				yVel=newyVel;
 				xVel=w.movingWall*newxVel*-1;
+				if(xVel==0) {
+					xVel=0.5;
+					cornerBounce=true;
+				}
+				if (Math.abs(xVel)<0.50) {
+					xVel=xVel+(xVel*0.50);
+					cornerBounce=true;
+				}
 			}
 			else if (ans[1]==w.lty) {
+				x = xrecent;
+				y = yrecent;
 				yVel=w.movingWall*newyVel*-1;
 				xVel=newxVel;
+				
 			}
 			else if (ans[1]==w.lby) {
+				x = xrecent;
+				y = yrecent;
 				yVel=w.movingWall*newyVel*-1;
 				xVel=newxVel;
 			}
@@ -218,6 +270,8 @@ class rock {
 	
 	public void move() {
 		
+		xrecent = x;
+		yrecent = y;
 		
 		xprev = (xcalc);
 		yprev = (ycalc);
