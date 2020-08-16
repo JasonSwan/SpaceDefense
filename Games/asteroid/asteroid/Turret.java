@@ -11,6 +11,7 @@ public class Turret {
 	boolean counterclockwise, clockwise;
 	double bx, by;
 	double tx, ty;
+	double utx, uty;
 	
 	double startx, starty;
 	
@@ -24,6 +25,10 @@ public class Turret {
 		
 		tx = 640;
 		ty = 280;
+		
+		
+		utx = 640;
+		uty = 50;
 		
 		startx = 640;
 		starty = 300;
@@ -75,6 +80,8 @@ public class Turret {
 			tx =Math.round( (640-640)*Math.cos(((Math.toRadians(r))))  - ((280-360)*Math.sin((Math.toRadians(r))) - 640) );
 			ty =Math.round(  (280-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
 		
+			utx =Math.round( (640-640)*Math.cos(((Math.toRadians(r))))  - ((50-360)*Math.sin((Math.toRadians(r))) - 640) );
+			uty =Math.round(  (50-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
 		}
 		if(counterclockwise) {
 			r=r-1.5;
@@ -87,6 +94,9 @@ public class Turret {
 			by =Math.round(  (310-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
 			tx =Math.round( (640-640)*Math.cos(((Math.toRadians(r))))  - ((280-360)*Math.sin((Math.toRadians(r))) - 640) );
 			ty =Math.round(  (280-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
+			
+			utx =Math.round( (640-640)*Math.cos(((Math.toRadians(r))))  - ((50-360)*Math.sin((Math.toRadians(r))) - 640) );
+			uty =Math.round(  (50-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
 		
 		}
 	}
@@ -107,6 +117,9 @@ public class Turret {
 		by=310;
 		tx = 640;
 		ty = 280;
+		
+		utx = 640;
+		uty = 50;
 		
 	}
 

@@ -38,7 +38,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	
 	boolean gameStart;
 	boolean gameOver;
-	boolean restart;
+	//boolean restart;
 	
 	int lifeTotal;
 	int score;
@@ -56,7 +56,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		bulletspray = false;
 		gameStart = false;
 		gameOver = false;
-		restart = false;
+		//restart = false;
 		lifeTotal = 10;
 		score = 0;
 	}
@@ -245,7 +245,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					if(bulletspray) {
 						int numberOfBullets = (int) Math.round(8);
 						for(int i=0; i<numberOfBullets; i++) {
-							bullet pellet = new bullet(t1).setRadius(3);
+							bullet pellet = new bullet(t1).setRadius(3).setSpeed(0.05, 0.05);
 							int decider = (int) Math.round(Math.random()*3+1);
 							if(decider == 1) {
 								pellet.xVel = pellet.xVel + ((Math.random()*0.75));
@@ -268,7 +268,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						bulletspawntimer = 200;
 					}
 					else {
-						bullets.add(new bullet(t1));
+						bullets.add(new bullet(t1).setSpeed(0.05, 0.05));
 						bulletspawntimer=40;
 					}
 				}

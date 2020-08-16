@@ -18,8 +18,8 @@ class bullet {
 		r = 6;
 		width = 6;
 		height = 6;
-		xVel = (t1.x-t1.bx)*0.50;
-		yVel = (t1.y-t1.by)*0.50;
+		xVel = (t1.utx-t1.bx)*0.50;
+		yVel = (t1.uty-t1.by)*0.50;
 		deadbul = false;
 	}
 	public void draw(Graphics g) {
