@@ -15,7 +15,7 @@ class rock {
 	public rock(){
 		//570 is left most side of base
 		
-		/*
+		
 		//make rocks spawn on random edge of map
 		int spawner = (int) Math.round(Math.random()*4+1);
 		if(spawner==1){
@@ -34,17 +34,21 @@ class rock {
 			x=1270;
 			y = Math.random() * 710 + 10;
 		}
-		*/
+		
 		
 
-		//xVel = getRandomSpeed()*getRandomDirection();
-		//yVel = getRandomSpeed()*getRandomDirection();
+		xVel = getRandomSpeed()*getRandomDirection();
+		yVel = getRandomSpeed()*getRandomDirection();
 		
+		
+		radius = 30;
+		
+		/*
 		x = 568;
 		y = 0;
 		xVel = 0.0;
 		yVel = 1.0;
-		radius = 30;
+		*/
 		
 		xcalc=x;
 		ycalc=y;
@@ -113,8 +117,6 @@ class rock {
 			return false;
 		}
 		
-		//boolean cornerBounce = false;
-		
 		//testing stretched margins
 		//remove -1/+1 if wrong
 		int[] ans = new int[2];
@@ -131,7 +133,6 @@ class rock {
 			int closestx = (int) xcalc;
 			ans[0] = closestx;
 		}
-		//test if
 		
 		if (ycalc < w.lty) {
 			int closesty = (int) w.lty;
@@ -181,7 +182,6 @@ class rock {
 			
 			
 			
-			boolean cornerBounce = false;
 			if(ans[0] == w.ltx) {
 				x = xrecent;
 				y = yrecent;
@@ -189,12 +189,12 @@ class rock {
 				xVel=w.movingWall*newxVel*-1;
 				//brute fix for "no bounce" scenarios
 				if(xVel==0) {
-					xVel=-0.5;
-					cornerBounce=true;
+					xVel=Math.cos(Math.toRadians(w.r))*(-0.5) + Math.sin(Math.toRadians(w.r))*(ycalc-yprev);
+					yVel = -yVel;
 				}
 				if (Math.abs(xVel)<0.50) {
 					xVel=xVel+(xVel*0.50);
-					cornerBounce=true;
+					yVel = -yVel;
 				}
 			}
 			else if (ans[0] == w.rtx) {
@@ -204,11 +204,11 @@ class rock {
 				xVel=w.movingWall*newxVel*-1;
 				if(xVel==0) {
 					xVel=0.5;
-					cornerBounce=true;
+					yVel = -yVel;
 				}
 				if (Math.abs(xVel)<0.50) {
-					xVel=xVel+(xVel*0.50);
-					cornerBounce=true;
+					xVel=Math.cos(Math.toRadians(w.r))*(0.5) + Math.sin(Math.toRadians(w.r))*(ycalc-yprev);
+					yVel = -yVel;
 				}
 			}
 			else if (ans[1]==w.lty) {
@@ -223,6 +223,7 @@ class rock {
 				y = yrecent;
 				yVel=w.movingWall*newyVel*-1;
 				xVel=newxVel;
+				
 			}
 			
 			//System.out.println("xvel is: " + String.valueOf(xVel));
