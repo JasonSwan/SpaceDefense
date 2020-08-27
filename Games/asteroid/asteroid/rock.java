@@ -11,6 +11,13 @@ class rock {
 	double xprev,yprev;
 	int collisionTimer;
 	
+	//rock power-ups
+	boolean no_pow;
+	boolean pow_shot;
+	boolean pow_laz;
+	boolean pow_frz;
+	boolean pow_health;
+	
 	
 	public rock(){
 		//570 is left most side of base
@@ -44,9 +51,10 @@ class rock {
 		radius = 30;
 		
 		/*
-		x = 568;
+		x = 727;
+		
 		y = 0;
-		xVel = 0.0;
+		xVel = -0.5;
 		yVel = 1.0;
 		*/
 		
@@ -56,6 +64,8 @@ class rock {
 		
 		xrecent = x;
 		yrecent = y;
+		
+		setPower();
 		
 	}
 	
@@ -72,7 +82,7 @@ class rock {
 	}
 	
 	public double getRandomSpeed() {
-		return(Math.random() *2);
+		return(Math.random() *(2-0.20)+0.20);
 	}
 	
 	public int getRandomDirection() {
@@ -85,9 +95,53 @@ class rock {
 		}
 	}
 	
+	public rock setSpeed (double xVelModifier, double yVelModifier) {
+		this.xVel = this.xVel*xVelModifier;
+		this.yVel = this.yVel*yVelModifier;
+		return this;
+	}
+	public void setPower() {
+		int power = (int) Math.abs((Math.random()*35));
+		if(power==0) {
+			pow_shot=true;
+		}
+		else if (power==1) {
+			pow_laz=true;
+		}
+		else if (power==2) {
+			pow_frz=true;
+		}
+		else if (power==3) {
+			pow_health=true;
+		}
+		else {
+			no_pow=true;
+		}
+	}
+	
 	public void draw(Graphics g) {
-		g.setColor(Color.orange);
-		g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
+		if(no_pow) {
+			g.setColor(Color.ORANGE);
+			g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
+		}
+		else if(pow_shot) {
+			g.setColor(Color.PINK);
+			g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
+		}
+		else if(pow_laz) {
+			g.setColor(Color.BLUE);
+			g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
+		}
+		else if(pow_frz) {
+			g.setColor(Color.CYAN);
+			g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
+		}
+		else if (pow_health) {
+			g.setColor(Color.RED);
+			g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
+		}
+		//g.setColor(Color.orange);
+		//g.drawOval((int)(xrecent-(radius)), (int)(yrecent-(radius)), (int)(radius*2), (int)(2*radius));
 	}
 	
 	//test to record hidden rock point
@@ -134,11 +188,11 @@ class rock {
 			ans[0] = closestx;
 		}
 		
-		if (ycalc < w.lty) {
+		if (ycalc < w.lty-(radius/2)) {
 			int closesty = (int) w.lty;
 			ans[1] = closesty;
 		}
-		else if (ycalc > w.lby) {
+		else if (ycalc > w.lby+(radius/2)) {
 			int closesty = (int) w.lby;
 			ans[1] = closesty;
 		}
@@ -150,11 +204,6 @@ class rock {
 		///////////////////////////////////
 		///////////////////////////////////
 		int total = (int) findDistance(ans[0],ans[1],xcalc,ycalc);
-		
-		//System.out.println("xcalc is: "+String.valueOf(xcalc));
-		//System.out.println("xprev is: "+String.valueOf(xprev));
-		//System.out.println("ycalc is: "+String.valueOf(ycalc));
-		//System.out.println("yprev is: "+String.valueOf(yprev));
 		
 		if(total < (radius)) {
 			
@@ -177,58 +226,33 @@ class rock {
 						( (yprev-360)*Math.cos(((Math.toRadians(w.r)))) + (xprev-640)*Math.sin((Math.toRadians(w.r)))+ 360 ));
 			}
 			
-			//System.out.println("newx is: " + String.valueOf(newxVel));
-			//System.out.println("newy is; " + String.valueOf(newyVel));
-			
-			
+	
 			
 			if(ans[0] == w.ltx) {
 				x = xrecent;
 				y = yrecent;
 				yVel=newyVel;
 				xVel=w.movingWall*newxVel*-1;
-				//brute fix for "no bounce" scenarios
-				if(xVel==0) {
-					xVel=Math.cos(Math.toRadians(w.r))*(-0.5) + Math.sin(Math.toRadians(w.r))*(ycalc-yprev);
-					yVel = -yVel;
-				}
-				if (Math.abs(xVel)<0.50) {
-					xVel=xVel+(xVel*0.50);
-					yVel = -yVel;
-				}
 			}
 			else if (ans[0] == w.rtx) {
 				x = xrecent;
 				y = yrecent;
 				yVel=newyVel;
 				xVel=w.movingWall*newxVel*-1;
-				if(xVel==0) {
-					xVel=0.5;
-					yVel = -yVel;
-				}
-				if (Math.abs(xVel)<0.50) {
-					xVel=Math.cos(Math.toRadians(w.r))*(0.5) + Math.sin(Math.toRadians(w.r))*(ycalc-yprev);
-					yVel = -yVel;
-				}
 			}
 			else if (ans[1]==w.lty) {
 				x = xrecent;
 				y = yrecent;
 				yVel=w.movingWall*newyVel*-1;
 				xVel=newxVel;
-				
 			}
 			else if (ans[1]==w.lby) {
 				x = xrecent;
 				y = yrecent;
 				yVel=w.movingWall*newyVel*-1;
 				xVel=newxVel;
-				
 			}
-			
-			//System.out.println("xvel is: " + String.valueOf(xVel));
-			//System.out.println("yvel is; " + String.valueOf(yVel));
-			
+
 			collisionTimer=100;
 			return true;
 		}

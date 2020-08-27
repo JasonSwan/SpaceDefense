@@ -15,9 +15,9 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import asteroid.Turret;
-import asteroid.bullet;
-import asteroid.rock;
+//import asteroid.Turret;
+//import asteroid.bullet;
+//import asteroid.rock;
 
 public class Contents extends JPanel implements KeyListener, ActionListener {
 	
@@ -29,12 +29,17 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	Turret t1 = new Turret();
 	
 	boolean bullethold;
-	boolean bulletspray;
+	
+	//power-up shots
+	boolean pow_shot;
+	boolean pow_laz;
+	boolean pow_frz;
 	
 	ArrayList<rock> rocks = new ArrayList<rock>();
 	ArrayList<bullet> bullets = new ArrayList<bullet>();
 	int spawntimer = 1000;
 	int bulletspawntimer = 0;
+	int pow_timer;
 	
 	boolean gameStart;
 	boolean gameOver;
@@ -53,7 +58,9 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		timer = new Timer(delay,this);
 		timer.start();
 		bullethold = false;
-		bulletspray = false;
+		pow_shot = false;
+		
+		
 		gameStart = false;
 		gameOver = false;
 		//restart = false;
@@ -154,6 +161,9 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				}
 				
 				//rock spawn rate
+				if(rocks.isEmpty()) {
+					rocks.add(new rock());
+				}
 				if(spawntimer != 0) {
 					spawntimer = spawntimer -1;
 				}
@@ -172,7 +182,6 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						itrb.remove();
 					}
 				}
-				
 				//rock-bullet collision iterator
 				ArrayList <rock> addAfter = new ArrayList<rock>();
 				itrb = bullets.iterator();
@@ -182,31 +191,120 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					while(itrr.hasNext()) {
 						rock currRock = itrr.next();
 						if( currRock.bulletCollision(currBull)) {
-							if(currRock.radius==30) {
-								addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
-								addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
+							//freeze shot
+							if(currBull.pow_frz) {
+								currRock.setSpeed(0.80, 0.80);
+								itrb.remove();
+								if(currRock.xVel < 0.05 && currRock.yVel < 0.05) {
+									if(currRock.radius==30) {
+										addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
+										addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
+									}
+									if(currRock.radius==20) {
+										addAfter.add(new rock().setRadius(10).setSpawn(currRock.getX(), currRock.getY()));
+										addAfter.add(new rock().setRadius(10).setSpawn(currRock.getX(), currRock.getY()));
+									}
+									if(currRock.pow_health) {
+										if(lifeTotal<10) {
+											lifeTotal+=1;
+										}
+									}
+									if(currRock.pow_shot) {
+										pow_timer = 1800;
+										t1.Shotgun();
+									}
+									if(currRock.pow_frz) {
+										pow_timer = 1800;
+										t1.Freeze();
+									}
+									if(currRock.pow_laz) {
+										pow_timer = 1800;
+										t1.Lazer();
+									}
+									itrr.remove();
+									score=score+5;
+								}
+								break;
 							}
-							if(currRock.radius==20) {
-								addAfter.add(new rock().setRadius(10).setSpawn(currRock.getX(), currRock.getY()));
-								addAfter.add(new rock().setRadius(10).setSpawn(currRock.getX(), currRock.getY()));
+							//other shots
+							else {
+								if(currRock.radius==30) {
+									addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
+									addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
+								}
+								if(currRock.radius==20) {
+									addAfter.add(new rock().setRadius(10).setSpawn(currRock.getX(), currRock.getY()));
+									addAfter.add(new rock().setRadius(10).setSpawn(currRock.getX(), currRock.getY()));
+								}
+								if(currRock.pow_health) {
+									if(lifeTotal<10) {
+										lifeTotal+=1;
+									}
+								}
+								if(currRock.pow_shot) {
+									pow_timer = 1800;
+									t1.Shotgun();
+								}
+								if(currRock.pow_frz) {
+									pow_timer = 1800;
+									t1.Freeze();
+								}
+								if(currRock.pow_laz) {
+									pow_timer = 1800;
+									t1.Lazer();
+								}
+								itrr.remove();
+								itrb.remove();
+								score=score+5;
+								break;
 							}
-							itrr.remove();
-							itrb.remove();
-							score=score+5;
-							break;
 						}
 					}
+				}
+				
+				
+				g2d.setColor(Color.red);
+				g2d.drawString("Power Timer: ", 10, 45);
+				
+				if(pow_timer>0) {
+					g2d.setColor(Color.GREEN);
+					g2d.drawString(String.valueOf(pow_timer), 86, 45);
+					pow_timer-=1;
+				}
+				else {
+					g2d.drawString("N/A", 86, 45);
+					t1.noPower();
 				}
 				//adds new rocks
 				for(int i = 0 ; i<addAfter.size();i++) {
 					rocks.add(addAfter.get(i));
 				}
 				
+				//display power timer
+				g2d.setColor(Color.red);
+				g2d.drawString("Current Power: ", 10, 60);
+				if(t1.pow_shot) {
+					g2d.setColor(Color.green);
+					g2d.drawString("Shotgun", 95, 60);
+				}
+				else if(t1.pow_laz) {
+					g2d.setColor(Color.green);
+					g2d.drawString("Lazer", 95, 60);
+				}
+				else if(t1.pow_frz) {
+					g2d.setColor(Color.green);
+					g2d.drawString("Freeze", 95, 60);
+				}
+				else {
+					g2d.setColor(Color.green);
+					g2d.drawString("Blaster", 95, 60);
+				}
+				
 				//display score
 				g2d.setColor(Color.red);
-				g2d.drawString("Score: ", 10, 45);
+				g2d.drawString("Score: ", 10, 75);
 				g2d.setColor(Color.green);
-				g2d.drawString(String.valueOf(score), 48, 45);
+				g2d.drawString(String.valueOf(score), 48, 75);
 				
 				
 			//gamestart bracket
@@ -239,13 +337,20 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			}
 	
 			//bullet firerate
+			//if(pow_shot) {
+			//	t1.Shotgun();
+			//}
+			//else {
+			//	t1.noPower();
+			//}
+			
 			if(bullethold) {
 				if(bulletspawntimer<1) {
 					//shotgun powerup, currently toggable
-					if(bulletspray) {
-						int numberOfBullets = (int) Math.round(8);
+					if(t1.pow_shot) {
+						int numberOfBullets = 8;
 						for(int i=0; i<numberOfBullets; i++) {
-							bullet pellet = new bullet(t1).setRadius(3).setSpeed(0.05, 0.05);
+							bullet pellet = new bullet(t1).setRadius(3).Shotgun();
 							int decider = (int) Math.round(Math.random()*3+1);
 							if(decider == 1) {
 								pellet.xVel = pellet.xVel + ((Math.random()*0.75));
@@ -267,8 +372,31 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						}
 						bulletspawntimer = 200;
 					}
+					else if(t1.pow_frz){
+						bullet shot = new bullet(t1).setRadius(3).Freeze().setSpeed(0.50, 0.50);
+						int decider = (int) Math.round(Math.random()*3+1);
+						if(decider == 1) {
+							shot.xVel = shot.xVel + ((Math.random()*0.75));
+							shot.yVel = shot.yVel + ((Math.random()*0.75));
+						}
+						if(decider == 2) {
+							shot.xVel = shot.xVel + ((Math.random()*0.75));
+							shot.yVel = shot.yVel - ((Math.random()*0.75));
+						}
+						if(decider == 3) {
+							shot.xVel = shot.xVel - ((Math.random()*0.75));
+							shot.yVel = shot.yVel + ((Math.random()*0.75));
+						}
+						if(decider == 4) {
+							shot.xVel = shot.xVel - ((Math.random()*0.75));
+							shot.yVel = shot.yVel - ((Math.random()*0.75));
+						}
+						bullets.add(shot);
+						
+						bulletspawntimer = 8;
+					}
 					else {
-						bullets.add(new bullet(t1).setSpeed(0.05, 0.05));
+						bullets.add(new bullet(t1));
 						bulletspawntimer=40;
 					}
 				}
@@ -315,7 +443,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			
 			//shotgun toggle
 			if(e.getKeyCode() == KeyEvent.VK_S) {
-				bulletspray = !bulletspray;
+				pow_shot = !pow_shot;
 			}
 		}
 		
@@ -333,8 +461,12 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				rocks.removeAll(rocks);
 				bullets.removeAll(bullets);
 				rocks.add(new rock());
+				
 				spawntimer = 1000;
-				bulletspray = false;
+				pow_shot = false;
+				pow_laz = false;
+				pow_frz = false;
+				
 				gameOver = false;
 				gameStart = false;
 			}

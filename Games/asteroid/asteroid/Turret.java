@@ -15,6 +15,12 @@ public class Turret {
 	
 	double startx, starty;
 	
+	boolean pow_shot;
+	boolean pow_laz;
+	boolean pow_frz;
+	
+	double lazx1; double lazx2; double lazy;
+	
 	public Turret() {
 		x=640;
 		y=300;
@@ -33,6 +39,13 @@ public class Turret {
 		startx = 640;
 		starty = 300;
 		
+		
+		pow_shot = false;
+		pow_laz = false;
+		pow_frz = false;
+		
+		lazx1 = 638; lazx2 = 641; lazy = -780;
+		
 	}
 	
 	public void draw(Graphics g) {
@@ -46,6 +59,29 @@ public class Turret {
 		g2d.setColor(Color.gray);
 		g2d.setTransform(at);
 		g2d.fillRect((int)x-5, (int)y-20, 10, 25);
+		
+		//g2d.setColor(Color.RED);
+		//g2d.drawRect((int)x-2, (int)y-20, 0, 780);
+		//g2d.drawRect((int)x+1, (int)y-20, 0, 780);
+		
+		//g2d.setColor(Color.RED);
+		//g2d.drawRect((int)lazx1, (int)lazy, 0, 1060);
+		//g2d.drawRect((int)lazx2, (int)lazy, 0, 1060);
+		
+		//AffineTransform ats = new AffineTransform();
+		if(pow_shot) {
+			g2d.setColor(Color.PINK);
+		}
+		else if (pow_laz) {
+			g2d.setColor(Color.BLUE);
+		}
+		else if(pow_frz) {
+			g2d.setColor(Color.CYAN);
+		}
+		else {
+			g2d.setColor(Color.GREEN);
+		}
+		g2d.fillRect((int)x-1 , (int)y-16, 2 ,16);
 		
 		//test pixel points
 		/*
@@ -67,6 +103,33 @@ public class Turret {
 	
 	}
 	
+	
+	
+	public  Turret Shotgun () {
+		this.pow_shot = true;
+		this.pow_laz = false;
+		this.pow_frz = false;
+		return this;
+	}
+	public  Turret Lazer () {
+		this.pow_shot = false;
+		this.pow_laz = true;
+		this.pow_frz = false;
+		return this;
+	}
+	public  Turret Freeze () {
+		this.pow_shot = false;
+		this.pow_laz = false;
+		this.pow_frz = true;
+		return this;
+	}
+	public Turret noPower() {
+		this.pow_shot = false;
+		this.pow_laz = false;
+		this.pow_frz = false;
+		return this;
+	}
+	
 	public void move() {
 		if(clockwise) {
 			r=r+1.5;
@@ -82,6 +145,12 @@ public class Turret {
 		
 			utx =Math.round( (640-640)*Math.cos(((Math.toRadians(r))))  - ((50-360)*Math.sin((Math.toRadians(r))) - 640) );
 			uty =Math.round(  (50-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
+			
+			//lazx1 = Math.round( (638-640)*Math.cos(((Math.toRadians(r))))  - ((360-360)*Math.sin((Math.toRadians(r))) - 640) );
+			//lazx2 = Math.round( (641-640)*Math.cos(((Math.toRadians(r))))  - ((360-360)*Math.sin((Math.toRadians(r))) - 640) );
+			//lazy = Math.round(  (-780-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
+			//lazy = Math.round(  (50-360)*Math.cos(((Math.toRadians(r)))) + (640-640)*Math.sin((Math.toRadians(r)))+360 );
+			
 		}
 		if(counterclockwise) {
 			r=r-1.5;
