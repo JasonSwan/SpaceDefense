@@ -31,15 +31,18 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	boolean bullethold;
 	
 	//power-up shots
-	boolean pow_shot;
-	boolean pow_laz;
-	boolean pow_frz;
+	//boolean pow_shot;
+	//boolean pow_laz;
+	//boolean pow_frz;
 	
 	ArrayList<rock> rocks = new ArrayList<rock>();
 	ArrayList<bullet> bullets = new ArrayList<bullet>();
 	int spawntimer = 1000;
 	int bulletspawntimer = 0;
 	int pow_timer;
+	int lazer_timer;
+	double lazer_angleX; double lazer_angleY;
+	double lazer_x; double lazer_y;
 	
 	boolean gameStart;
 	boolean gameOver;
@@ -58,7 +61,6 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		timer = new Timer(delay,this);
 		timer.start();
 		bullethold = false;
-		pow_shot = false;
 		
 		
 		gameStart = false;
@@ -195,7 +197,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 							if(currBull.pow_frz) {
 								currRock.setSpeed(0.80, 0.80);
 								itrb.remove();
-								if(currRock.xVel < 0.05 && currRock.yVel < 0.05) {
+								if(Math.abs(currRock.xVel) < 0.08 && Math.abs(currRock.yVel) < 0.08) {
 									if(currRock.radius==30) {
 										addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
 										addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
@@ -254,7 +256,9 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 									t1.Lazer();
 								}
 								itrr.remove();
-								itrb.remove();
+								if(!currBull.pow_laz) {
+									itrb.remove();
+								}
 								score=score+5;
 								break;
 							}
@@ -343,7 +347,10 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			//else {
 			//	t1.noPower();
 			//}
-			
+			if(lazer_timer>0) {
+				bullets.add(new bullet(t1).Lazer().setSpeed(1.3, 1.3).setVelocity(lazer_angleX, lazer_angleY).setSpawn(lazer_x, lazer_y));
+				lazer_timer-=1;
+			}
 			if(bullethold) {
 				if(bulletspawntimer<1) {
 					//shotgun powerup, currently toggable
@@ -393,7 +400,17 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						}
 						bullets.add(shot);
 						
-						bulletspawntimer = 8;
+						bulletspawntimer = 5;
+					}
+					else if(t1.pow_laz) {
+						lazer_timer=10;
+						bullet lazer = new bullet(t1).Lazer().setSpeed(1.3, 1.3);
+						bullets.add(lazer);
+						lazer_angleX=lazer.xVel;
+						lazer_angleY=lazer.yVel;
+						lazer_x=lazer.x;
+						lazer_y=lazer.y;
+						bulletspawntimer = 150;
 					}
 					else {
 						bullets.add(new bullet(t1));
@@ -429,11 +446,12 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			
 			//TURRET CONTROLS
 			if(e.getKeyCode() == KeyEvent.VK_D) {
-				t1.setclockwise(true);
+					t1.setclockwise(true);
+				
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_A) {
-				t1.setcounterclockwise(true);
+					t1.setcounterclockwise(true);
 			}
 			
 			if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -443,7 +461,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			
 			//shotgun toggle
 			if(e.getKeyCode() == KeyEvent.VK_S) {
-				pow_shot = !pow_shot;
+				//pow_shot = !pow_shot;
 			}
 		}
 		
@@ -463,9 +481,10 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				rocks.add(new rock());
 				
 				spawntimer = 1000;
-				pow_shot = false;
-				pow_laz = false;
-				pow_frz = false;
+				t1.noPower();
+				//pow_shot = false;
+				//pow_laz = false;
+				//pow_frz = false;
 				
 				gameOver = false;
 				gameStart = false;
@@ -489,7 +508,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		
 		
 		if(e.getKeyCode() == KeyEvent.VK_D) {
-			t1.setclockwise(false);
+				t1.setclockwise(false);
 		}
 		
 		if(e.getKeyCode() == KeyEvent.VK_A) {

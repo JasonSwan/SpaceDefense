@@ -94,6 +94,18 @@ class bullet {
 		return this;
 	}
 	
+	public bullet setVelocity (double xv, double yv) {
+		this.xVel = xv;
+		this.yVel = yv;
+		return this;
+	}
+	
+	public bullet setSpawn (double x, double y) {
+		this.x=x;
+		this.y=y;
+		return this;
+	}
+	
 	
 	public  bullet Shotgun () {
 		this.pow_shot = true;
