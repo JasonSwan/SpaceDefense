@@ -67,7 +67,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		gameStart = false;
 		gameOver = false;
 		//restart = false;
-		lifeTotal = 0;
+		lifeTotal = 10;
 		score = 0;
 	}
 	
@@ -132,7 +132,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						itrr.remove();
 					}
 				}
-				
+				//0 life is game over
 				if(lifeTotal < 1) {
 					gameOver = true;
 				}
@@ -144,12 +144,9 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					rocks.get(i).wallCollision(w1);
 				}
 				
-				//g2d.setTransform(new AffineTransform());;
-				
 				
 				//draw bullets and set time for next bullet
 				//draw text to show cooldown of next shot
-				//becomes useful when new bullet types are added
 				if(bulletspawntimer!=0) {
 					bulletspawntimer = bulletspawntimer -1;
 					g2d.setColor(Color.red);
@@ -164,6 +161,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				}
 				
 				//rock spawn rate
+				//add rocks to empty board so that players get no down time
 				if(rocks.isEmpty()) {
 					rocks.add(new rock());
 				}
@@ -178,6 +176,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				
 				
 				//bullet-end iterator
+				//removes bullets once they are off teh screen
 				Iterator<bullet> itrb = bullets.iterator();
 				while(itrb.hasNext()) {
 					bullet currBull = itrb.next();
@@ -266,8 +265,13 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						}
 					}
 				}
+
+				//adds new rocks
+				for(int i = 0 ; i<addAfter.size();i++) {
+					rocks.add(addAfter.get(i));
+				}
 				
-				
+				//displays power-up timer
 				g2d.setColor(Color.red);
 				g2d.drawString("Power Timer: ", 10, 45);
 				
@@ -280,12 +284,8 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					g2d.drawString("N/A", 86, 45);
 					t1.noPower();
 				}
-				//adds new rocks
-				for(int i = 0 ; i<addAfter.size();i++) {
-					rocks.add(addAfter.get(i));
-				}
 				
-				//display power timer
+				//display power-up type
 				g2d.setColor(Color.red);
 				g2d.drawString("Current Power: ", 10, 60);
 				if(t1.pow_shot) {
@@ -340,14 +340,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			for(int i = 0; i<bullets.size();i++) {
 				bullets.get(i).move();
 			}
-	
-			//bullet firerate
-			//if(pow_shot) {
-			//	t1.Shotgun();
-			//}
-			//else {
-			//	t1.noPower();
-			//}
+			//add-after bullets for lazer
 			if(lazer_timer>0) {
 				bullets.add(new bullet(t1).Lazer().setSpeed(1.3, 1.3).setVelocity(lazer_angleX, lazer_angleY).setSpawn(lazer_x, lazer_y));
 				lazer_timer-=1;
