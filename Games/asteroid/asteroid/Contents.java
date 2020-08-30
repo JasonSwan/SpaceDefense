@@ -44,6 +44,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	double lazer_angleX; double lazer_angleY;
 	double lazer_x; double lazer_y;
 	
+	boolean gameMenu;
 	boolean gameStart;
 	boolean gameOver;
 	//boolean restart;
@@ -62,11 +63,11 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		timer.start();
 		bullethold = false;
 		
-		
+		gameMenu = true;
 		gameStart = false;
 		gameOver = false;
 		//restart = false;
-		lifeTotal = 10;
+		lifeTotal = 0;
 		score = 0;
 	}
 	
@@ -80,7 +81,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		g2d.fillRect(0, 0, 1280, 720);
 		
 
-		if(gameOver==false && gameStart==false){
+		if(gameMenu){
 			g2d.setColor(Color.white);
 			g2d.drawString("PRESS 'Enter' TO START", 570, 250);
 			t1.draw(g2d);
@@ -90,7 +91,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			//w1.move();
 		}
 		//GAME OVER
-		else if(gameOver==true && gameStart == true) {
+		else if(gameOver) {
 			g2d.setColor(Color.white);
 			g2d.drawString("GAME OVER", 620, 345);
 			g2d.setColor(Color.white);
@@ -98,7 +99,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			g2d.drawString("PRESS 'ENTER' TO RESTART", 570, 375);
 			//timer.stop();
 		}
-		else if(gameOver==false && gameStart==true) {
+		else if(gameStart) {
 			
 			//game pieces
 			t1.draw(g2d);
@@ -467,10 +468,11 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		
 		//START GAME
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-			if(gameStart==false && gameOver == false) {
+			if(gameMenu) {
 				gameStart = true;
+				gameMenu=false;
 			}
-			if(gameOver == true && gameStart == true) {
+			if(gameOver) {
 				score = 0;
 				lifeTotal = 10;
 				w1.restart();
@@ -486,6 +488,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				//pow_laz = false;
 				//pow_frz = false;
 				
+				gameMenu=true;
 				gameOver = false;
 				gameStart = false;
 			}
