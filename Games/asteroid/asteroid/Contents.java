@@ -37,19 +37,30 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	
 	ArrayList<rock> rocks = new ArrayList<rock>();
 	ArrayList<bullet> bullets = new ArrayList<bullet>();
+	//rock-spawn timer
 	int spawntimer = 1000;
+	//bullet spawn timer
 	int bulletspawntimer = 0;
+	//power-up timer
 	int pow_timer;
+	//lazer add-after bullet timer
+	//and add-after bullet coordinates and velocity
 	int lazer_timer;
 	double lazer_angleX; double lazer_angleY;
 	double lazer_x; double lazer_y;
 	
-	boolean gameMenu;
-	boolean gameStart;
-	boolean gameOver;
-	//boolean restart;
 	
+	//GAME SCREENS
+	//menu
+	boolean gameMenu;
+	//start
+	boolean gameStart;
+	//game over
+	boolean gameOver;
+	
+	//player life
 	int lifeTotal;
+	//player score
 	int score;
 	
 	

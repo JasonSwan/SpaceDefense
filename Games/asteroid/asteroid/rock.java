@@ -5,10 +5,17 @@ import java.awt.Graphics;
 
 
 class rock {
+	
+	//visual rock coordinates and velocity
 	double xVel, yVel, x ,y, radius;
+	//previous coordinates for visual rock
 	double xrecent,yrecent;
+	
+	//calculation rock coordinates
 	double xcalc, ycalc;
+	//previous coordinates for calculation rock
 	double xprev,yprev;
+	
 	int collisionTimer;
 	
 	//rock power-ups
@@ -24,6 +31,7 @@ class rock {
 		
 		
 		//make rocks spawn on random edge of map
+		
 		int spawner = (int) Math.round(Math.random()*4+1);
 		if(spawner==1){
 			x = Math.random() * 1270+10;
@@ -48,14 +56,17 @@ class rock {
 		yVel = getRandomSpeed()*getRandomDirection();
 		
 		
+		
 		radius = 30;
 		
 		/*
-		x = 727;
+		//
+		x = 706;
 		
 		y = 0;
 		xVel = -0.5;
 		yVel = 1.0;
+		//
 		*/
 		
 		xcalc=x;
@@ -227,7 +238,9 @@ class rock {
 			}
 			
 	
-			
+	
+			//ADD new bounce rule for side walls
+			//if bounce x,y velocities of calc rocks goes towards base, x = -x
 			if(ans[0] == w.ltx) {
 				x = xrecent;
 				y = yrecent;
@@ -251,6 +264,11 @@ class rock {
 				y = yrecent;
 				yVel=w.movingWall*newyVel*-1;
 				xVel=newxVel;
+			}
+			
+			//fix attempt
+			if(  Math.abs( 640-(x+xVel) ) < ( Math.abs(640-x) ) && Math.abs( 360-(y+yVel) ) < ( Math.abs(360-y) )  ) {
+				xVel*=-1;
 			}
 
 			collisionTimer=100;
