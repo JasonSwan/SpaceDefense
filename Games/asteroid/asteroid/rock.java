@@ -32,6 +32,7 @@ class rock {
 		
 		//make rocks spawn on random edge of map
 		
+		
 		int spawner = (int) Math.round(Math.random()*4+1);
 		if(spawner==1){
 			x = Math.random() * 1270+10;
@@ -50,7 +51,6 @@ class rock {
 			y = Math.random() * 710 + 10;
 		}
 		
-		
 
 		xVel = getRandomSpeed()*getRandomDirection();
 		yVel = getRandomSpeed()*getRandomDirection();
@@ -59,15 +59,21 @@ class rock {
 		
 		radius = 30;
 		
+		//uncomment when testing rocks
 		/*
-		//
 		x = 706;
-		
 		y = 0;
 		xVel = -0.5;
 		yVel = 1.0;
-		//
 		*/
+		//
+		/*
+		y=660;
+		x=320;
+		xVel=0.55;
+		yVel=-0.55;
+		*/
+		
 		
 		xcalc=x;
 		ycalc=y;
@@ -186,6 +192,7 @@ class rock {
 		//remove -1/+1 if wrong
 		int[] ans = new int[2];
 		ans[0] = 0;
+		//left/right/middle of wall
 		if (xcalc < w.ltx-(radius/2)) {
 			int closestx = (int) w.ltx;
 			ans[0] = closestx;
@@ -199,6 +206,7 @@ class rock {
 			ans[0] = closestx;
 		}
 		
+		//top/bottom/middle/ of wall
 		if (ycalc < w.lty-(radius/2)) {
 			int closesty = (int) w.lty;
 			ans[1] = closesty;
@@ -221,8 +229,6 @@ class rock {
 			double newxVel;
 			double newyVel;
 			
-			
-			
 			newxVel = Math.cos(Math.toRadians(w.r))*(xcalc-xprev) + Math.sin(Math.toRadians(w.r))*(ycalc-yprev);
 			newyVel = -Math.sin(Math.toRadians(w.r))*(xcalc-xprev) + Math.cos(Math.toRadians(w.r))*(ycalc-yprev);
 	
@@ -237,10 +243,7 @@ class rock {
 						( (yprev-360)*Math.cos(((Math.toRadians(w.r)))) + (xprev-640)*Math.sin((Math.toRadians(w.r)))+ 360 ));
 			}
 			
-	
-	
-			//ADD new bounce rule for side walls
-			//if bounce x,y velocities of calc rocks goes towards base, x = -x
+			//if-else block determines which velocities get modified
 			if(ans[0] == w.ltx) {
 				x = xrecent;
 				y = yrecent;
@@ -267,10 +270,12 @@ class rock {
 			}
 			
 			//fix attempt
-			if(  Math.abs( 640-(x+xVel) ) < ( Math.abs(640-x) ) && Math.abs( 360-(y+yVel) ) < ( Math.abs(360-y) )  ) {
-				xVel*=-1;
+			if(  Math.abs( 640-(xcalc+xVel) ) <= ( Math.abs(640-xcalc) ) && Math.abs( 360-(ycalc+yVel) ) <= ( Math.abs(360-ycalc) )  ) {
+				if(ans[1]!=w.lby) {
+					xVel*=-1;
+				}
 			}
-
+			
 			collisionTimer=100;
 			return true;
 		}
