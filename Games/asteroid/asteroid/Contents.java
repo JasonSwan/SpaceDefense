@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,9 +14,12 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-//import asteroid.Turret;
-//import asteroid.bullet;
-//import asteroid.rock;
+import java.io.File;
+//file-path imports
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Contents extends JPanel implements KeyListener, ActionListener {
 	
@@ -29,11 +31,6 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	Turret t1 = new Turret();
 	
 	boolean bullethold;
-	
-	//power-up shots
-	//boolean pow_shot;
-	//boolean pow_laz;
-	//boolean pow_frz;
 	
 	ArrayList<rock> rocks = new ArrayList<rock>();
 	ArrayList<bullet> bullets = new ArrayList<bullet>();
@@ -62,6 +59,8 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	int lifeTotal;
 	//player score
 	int score;
+	List<String> scoreLines;
+	
 	
 	
 	public Contents() {
@@ -80,6 +79,23 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		//restart = false;
 		lifeTotal = 10;
 		score = 0;
+		
+		//inital reading of highscore file
+		try {
+			File scoreFile = new File("asteroid/scores.txt");
+			scoreFile.createNewFile();
+			String filename="asteroid/scores.txt";
+		    Path pathToFile = Paths.get(filename);
+		    System.out.println(pathToFile.toAbsolutePath());
+			//get list at start of game, modify at end of game
+		    scoreLines = Files.readAllLines( pathToFile);
+			for(int i = 0; i <scoreLines.size();i++) {
+				System.out.println(scoreLines.get(i));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -91,7 +107,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, 1280, 720);
 		
-
+		//MENU SCREEN
 		if(gameMenu){
 			g2d.setColor(Color.white);
 			g2d.drawString("PRESS 'Enter' TO START", 570, 250);
@@ -101,15 +117,20 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			//w1.r=w1.r+1;
 			//w1.move();
 		}
-		//GAME OVER
+		//GAME OVER SCREEN
 		else if(gameOver) {
 			g2d.setColor(Color.white);
 			g2d.drawString("GAME OVER", 620, 345);
 			g2d.setColor(Color.white);
 			g2d.drawString("SCORE: " + String.valueOf(score), 622, 360);
 			g2d.drawString("PRESS 'ENTER' TO RESTART", 570, 375);
+			for(int i = 0; i<scoreLines.size(); i++) {
+				g2d.drawString(scoreLines.get(i), 10, i*15+15);
+			}
+			
 			//timer.stop();
 		}
+		//GAME START SCREEN
 		else if(gameStart) {
 			
 			//game pieces
@@ -495,6 +516,8 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				gameMenu=true;
 				gameOver = false;
 				gameStart = false;
+				
+				//update highscore file here
 			}
 			
 		}
