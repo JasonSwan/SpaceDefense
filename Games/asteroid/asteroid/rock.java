@@ -50,7 +50,6 @@ class rock {
 			x=1270;
 			y = Math.random() * 710 + 10;
 		}
-		
 
 		xVel = getRandomSpeed()*getRandomDirection();
 		yVel = getRandomSpeed()*getRandomDirection();
@@ -60,18 +59,20 @@ class rock {
 		radius = 30;
 		
 		//uncomment when testing rocks
+		
 		/*
-		x = 706;
+		//x = 706;
+		x = 906;
 		y = 0;
 		xVel = -0.5;
 		yVel = 1.0;
 		*/
 		//
 		/*
-		y=660;
-		x=320;
-		xVel=0.55;
-		yVel=-0.55;
+		y=175;
+		x=280;
+		xVel=1.00;
+		yVel=0.55;
 		*/
 		
 		
@@ -270,11 +271,17 @@ class rock {
 			}
 			
 			//fix attempt
-			if(  Math.abs( 640-(xcalc+xVel) ) <= ( Math.abs(640-xcalc) ) && Math.abs( 360-(ycalc+yVel) ) <= ( Math.abs(360-ycalc) )  ) {
+			//if rock is still moving towards center of spacebase after bounce, reverse x
+			
+			if(  Math.abs( 640-(x+xVel) ) <= ( Math.abs(640-x) ) && Math.abs( 360-(y+yVel) ) <= ( Math.abs(360-y) )  ) {
 				if(ans[1]!=w.lby) {
 					xVel*=-1;
 				}
 			}
+			
+			//new attempt idea
+			//if trajectory of rock is still in wall for 1-2 redraws, change x or y
+			
 			
 			collisionTimer=100;
 			return true;
