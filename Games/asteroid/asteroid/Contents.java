@@ -21,6 +21,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.Writer;
+
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Contents extends JPanel implements KeyListener, ActionListener {
 	
 	private Timer timer;
@@ -86,12 +94,27 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			scoreFile.createNewFile();
 			String filename="asteroid/scores.txt";
 		    Path pathToFile = Paths.get(filename);
-		    System.out.println(pathToFile.toAbsolutePath());
+		    //System.out.println(pathToFile.toAbsolutePath());
 			//get list at start of game, modify at end of game
 		    scoreLines = Files.readAllLines( pathToFile);
+		    
+		    //fills the file with empty scores
+		    Writer file2Add = new BufferedWriter(new FileWriter(filename, true));
+		    if(scoreLines.size()<9) {
+			    for(int i = 0; i < 9-scoreLines.size(); i++) {
+			    	if(i == 0) {
+			    		file2Add.append("null , 0");
+			    	}
+			    	file2Add.append(System.lineSeparator()+"null , 0");
+			    }
+		    }
+		    file2Add.close();
+		    /*
+		    //prints lines in terminal
 			for(int i = 0; i <scoreLines.size();i++) {
 				System.out.println(scoreLines.get(i));
 			}
+			*/
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,8 +137,6 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			t1.draw(g2d);
 			w1.draw(g2d);
 			b1.draw(g2d);
-			//w1.r=w1.r+1;
-			//w1.move();
 		}
 		//GAME OVER SCREEN
 		else if(gameOver) {
@@ -124,6 +145,17 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			g2d.setColor(Color.white);
 			g2d.drawString("SCORE: " + String.valueOf(score), 622, 360);
 			g2d.drawString("PRESS 'ENTER' TO RESTART", 570, 375);
+			//check if player score beats anything on the highscore list
+			for(int i = 0; i<scoreLines.size(); i++) {
+				Pattern pattern = Pattern.compile("\\ , (\\d+)", Pattern.CASE_INSENSITIVE);
+			    Matcher matcher = pattern.matcher(scoreLines.get(i));
+				if(score>Integer.parseInt(matcher.group(0))) {
+					System.out.println("nice");
+					break;
+				}
+				
+			}
+			//display the highscores
 			for(int i = 0; i<scoreLines.size(); i++) {
 				g2d.drawString(scoreLines.get(i), 10, i*15+15);
 			}
