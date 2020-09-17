@@ -15,12 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import java.io.File;
+import java.io.FileReader;
 //file-path imports
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -63,11 +64,16 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 	//game over
 	boolean gameOver;
 	
+	boolean scoreOnBoard;
+	boolean scoreFound;
+	int placement;
+	
 	//player life
 	int lifeTotal;
 	//player score
 	int score;
 	List<String> scoreLines;
+	String playerName;
 	
 	
 	
@@ -84,9 +90,13 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		gameMenu = true;
 		gameStart = false;
 		gameOver = false;
+		scoreOnBoard=false;
+		scoreFound=false;
 		//restart = false;
 		lifeTotal = 10;
 		score = 0;
+		
+		playerName = "";
 		
 		//inital reading of highscore file
 		try {
@@ -109,6 +119,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			    }
 		    }
 		    file2Add.close();
+		    scoreLines = Files.readAllLines(pathToFile);
 		    /*
 		    //prints lines in terminal
 			for(int i = 0; i <scoreLines.size();i++) {
@@ -146,18 +157,33 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			g2d.drawString("SCORE: " + String.valueOf(score), 622, 360);
 			g2d.drawString("PRESS 'ENTER' TO RESTART", 570, 375);
 			//check if player score beats anything on the highscore list
-			for(int i = 0; i<scoreLines.size(); i++) {
-				Pattern pattern = Pattern.compile("\\ , (\\d+)", Pattern.CASE_INSENSITIVE);
-			    Matcher matcher = pattern.matcher(scoreLines.get(i));
-				if(score>Integer.parseInt(matcher.group(0))) {
-					System.out.println("nice");
-					break;
+			if(scoreFound==false) {
+				for(int i = 0; i<scoreLines.size(); i++) {
+						Pattern pattern = Pattern.compile("\\ , (\\d+)", Pattern.CASE_INSENSITIVE);
+					    Matcher matcher = pattern.matcher(scoreLines.get(i));
+					    matcher.find();
+						if(score>Integer.parseInt(matcher.group(1))) {
+							//Scanner sc = new Scanner(System.in);
+							//int a= sc.nextInt();
+							scoreOnBoard = true;
+							playerName = "";
+							placement = i;
+							//System.out.println(a);
+							//System.out.println("nice");
+							scoreFound = true;
+							break;
+						}
+						
 				}
-				
 			}
 			//display the highscores
-			for(int i = 0; i<scoreLines.size(); i++) {
-				g2d.drawString(scoreLines.get(i), 10, i*15+15);
+			if(scoreOnBoard) {
+				g2d.drawString(playerName, 10, 15+(placement*15));
+			}
+			else {
+				for(int i = 0; i<scoreLines.size(); i++) {
+					g2d.drawString(scoreLines.get(i), 10, i*15+15);
+				}
 			}
 			
 			//timer.stop();
@@ -484,7 +510,11 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+		if(scoreOnBoard) {
+			if(Character.isLetter(e.getKeyChar()) && playerName.length()<10) {
+				playerName+=e.getKeyChar();
+			}
+		}
 		
 		
 	}
@@ -529,7 +559,58 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				gameStart = true;
 				gameMenu=false;
 			}
-			if(gameOver) {
+			//if player score is on the highscore
+			if(scoreOnBoard) {
+				//update scorefile here
+				scoreOnBoard=false;
+				try {
+					String filename="asteroid/scores.txt";
+				    Path pathToFile = Paths.get(filename);
+				    scoreLines = Files.readAllLines( pathToFile);
+				    
+				    BufferedReader reader = new BufferedReader(new FileReader(filename));
+				    
+				    
+				    String line = reader.readLine();
+				    String oldFile = "";
+				    int replace=0;
+				    boolean moveDown = false;
+				    String hold = "";
+				    while(line!=null) {
+				    	if(replace==placement) {;
+				    		oldFile=oldFile+(playerName+" , "+score)+System.lineSeparator();
+				    		hold = line;
+				    		line = reader.readLine();
+				    		replace+=1;
+				    		moveDown = true;
+				    		continue;
+				    	}
+				    	if(moveDown) {
+				    		oldFile = oldFile+hold+System.lineSeparator();
+				    		hold = line;
+				    		line = reader.readLine();
+					    	replace+=1;
+					    	continue;
+				    	}
+				    	oldFile = oldFile+line+System.lineSeparator();
+				    	hold = line;
+				    	line = reader.readLine();
+				    	replace+=1;
+				    }
+				    //String newContent = oldFile.replace(scoreLines.get(placement), playerName+" , "+score);
+				    FileWriter writer = new FileWriter(filename);
+				    writer.write(oldFile);
+				    reader.close();
+				    writer.close();
+				    scoreLines = Files.readAllLines(pathToFile);
+				}
+				catch(IOException e1){
+					e1.printStackTrace();
+				}
+				
+				
+			}
+			else if(gameOver) {
 				score = 0;
 				lifeTotal = 10;
 				w1.restart();
@@ -549,9 +630,20 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				gameOver = false;
 				gameStart = false;
 				
+				scoreOnBoard = false;
+				scoreFound = false;
+				placement = 0;
+				
 				//update highscore file here
 			}
 			
+		}
+		if(scoreOnBoard) {
+			if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+				if(playerName.length()>0) {
+					playerName = playerName.substring(0, playerName.length()-1);
+				}
+			}
 		}
 		
 	}
