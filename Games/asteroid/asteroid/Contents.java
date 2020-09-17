@@ -26,7 +26,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.Writer;
 
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -179,6 +178,8 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			//display the highscores
 			if(scoreOnBoard) {
 				g2d.drawString(playerName, 10, 15+(placement*15));
+				g2d.drawString("<- Type Name Here (10 Char max)",100, 15+(placement*15));
+				g2d.drawString("Press 'Enter' to submit", 100, 30+(placement*15));
 			}
 			else {
 				for(int i = 0; i<scoreLines.size(); i++) {
