@@ -143,7 +143,10 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 		//MENU SCREEN
 		if(gameMenu){
 			g2d.setColor(Color.white);
-			g2d.drawString("PRESS 'Enter' TO START", 570, 250);
+			g2d.drawString("'A' and 'D' to rotate turret", 575, 205);
+			g2d.drawString("'SPACE' to fire", 600, 220);
+			g2d.drawString("'LEFT' and 'RIGHT' arrows to rotate wall", 530, 235);
+			g2d.drawString("PRESS 'Enter' TO START", 570, 265);
 			t1.draw(g2d);
 			w1.draw(g2d);
 			b1.draw(g2d);
