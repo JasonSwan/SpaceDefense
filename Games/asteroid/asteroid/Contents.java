@@ -162,13 +162,9 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					    Matcher matcher = pattern.matcher(scoreLines.get(i));
 					    matcher.find();
 						if(score>Integer.parseInt(matcher.group(1))) {
-							//Scanner sc = new Scanner(System.in);
-							//int a= sc.nextInt();
 							scoreOnBoard = true;
 							playerName = "";
 							placement = i;
-							//System.out.println(a);
-							//System.out.println("nice");
 							scoreFound = true;
 							break;
 						}
@@ -194,11 +190,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 			
 			//game pieces
 			t1.draw(g2d);
-			//g2d.setTransform(new AffineTransform());
 			w1.draw(g2d);
-			//anything placed beneath the base b1 seems to have connected movements
-			//put player controlled objects above b1, and the rest underneath
-			//"fix" by setting g2d.setTansform to 0
 			b1.draw(g2d);
 			//GAME START
 			if(gameStart) {
@@ -276,6 +268,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					}
 				}
 				//rock-bullet collision iterator
+				//takes each bullet and checks if they are colliding with a rock
 				ArrayList <rock> addAfter = new ArrayList<rock>();
 				itrb = bullets.iterator();
 				while(itrb.hasNext()) {
@@ -284,7 +277,8 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 					while(itrr.hasNext()) {
 						rock currRock = itrr.next();
 						if( currRock.bulletCollision(currBull)) {
-							//freeze shot
+							//rules of collision if freeze shot
+							//rock will gradually slow each hit until it reaches a min speed in which it explodes
 							if(currBull.pow_frz) {
 								currRock.setSpeed(0.80, 0.80);
 								itrb.remove();
@@ -319,7 +313,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 								}
 								break;
 							}
-							//other shots
+							//rules of collision for other shots
 							else {
 								if(currRock.radius==30) {
 									addAfter.add(new rock().setRadius(20).setSpawn(currRock.getX(), currRock.getY()));
@@ -436,11 +430,13 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				bullets.add(new bullet(t1).Lazer().setSpeed(1.3, 1.3).setVelocity(lazer_angleX, lazer_angleY).setSpawn(lazer_x, lazer_y));
 				lazer_timer-=1;
 			}
+			//if spacebar is pressed or held down
 			if(bullethold) {
 				if(bulletspawntimer<1) {
-					//shotgun powerup, currently toggable
+					//shotgun powerup
 					if(t1.pow_shot) {
 						int numberOfBullets = 8;
+						//generates random speed modifiers for each pellet of the shotgun shot
 						for(int i=0; i<numberOfBullets; i++) {
 							bullet pellet = new bullet(t1).setRadius(3).Shotgun();
 							int decider = (int) Math.round(Math.random()*3+1);
@@ -465,6 +461,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						bulletspawntimer = 200;
 					}
 					else if(t1.pow_frz){
+						//generates freeze shot with speed modifiers
 						bullet shot = new bullet(t1).setRadius(3).Freeze().setSpeed(0.50, 0.50);
 						int decider = (int) Math.round(Math.random()*3+1);
 						if(decider == 1) {
@@ -487,6 +484,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 						
 						bulletspawntimer = 5;
 					}
+					//lazer shot is fired, and coordinates are recorded for lazer bullets in next frame
 					else if(t1.pow_laz) {
 						lazer_timer=10;
 						bullet lazer = new bullet(t1).Lazer().setSpeed(1.3, 1.3);
@@ -511,6 +509,7 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
+		//only used when current player gets on the highscore board
 		if(scoreOnBoard) {
 			if(Character.isLetter(e.getKeyChar()) && playerName.length()<10) {
 				playerName+=e.getKeyChar();
@@ -634,6 +633,8 @@ public class Contents extends JPanel implements KeyListener, ActionListener {
 				scoreOnBoard = false;
 				scoreFound = false;
 				placement = 0;
+				
+				playerName="";
 				
 				//update highscore file here
 			}
