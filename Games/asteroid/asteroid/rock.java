@@ -61,8 +61,8 @@ class rock {
 		//uncomment when testing rocks
 		
 		/*
-		//x = 706;
-		x = 906;
+		x = 706;
+		//x = 906;
 		y = 0;
 		xVel = -0.5;
 		yVel = 1.0;
@@ -275,6 +275,7 @@ class rock {
 			
 			if(  Math.abs( 640-(x+xVel) ) <= ( Math.abs(640-x) ) && Math.abs( 360-(y+yVel) ) <= ( Math.abs(360-y) )  ) {
 				if(ans[1]!=w.lby) {
+					yVel*=-1;
 					xVel*=-1;
 				}
 			}
